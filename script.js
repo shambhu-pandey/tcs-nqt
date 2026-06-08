@@ -114,6 +114,15 @@ function updateUserUI() {
 }
 
 // ── My Notes modal ────────────────────────────────────────
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function openNotesModal() {
   const modal = document.getElementById('notesModal');
   const list = document.getElementById('notesList');
@@ -130,16 +139,40 @@ function openNotesModal() {
   } else {
     notes.forEach(item => {
       const div = document.createElement('div');
-      div.className = 'rev-item';
+      const previewParts = [];
+      if (item.d.notes && item.d.notes.trim()) previewParts.push(item.d.notes.trim());
+      if (item.d.approach && item.d.approach.trim()) previewParts.push(`Approach: ${item.d.approach.trim()}`);
+      if (item.d.code && item.d.code.trim()) previewParts.push(`Code: ${item.d.code.trim()}`);
+      if (item.d.trick && item.d.trick.trim()) previewParts.push(`Trick: ${item.d.trick.trim()}`);
+
+      const previewText = previewParts.join('\n\n');
+      const preview = previewText.length > 320 ? `${previewText.slice(0, 320).trim()}...` : previewText;
+
+      div.className = 'note-card';
       div.innerHTML = `
-        <span class="rev-topic">${item.q.topic}</span>
-        <span style="flex:1;font-size:0.9rem">${item.q.title}</span>
-        <button class="link-btn" style="margin-left:8px">Open</button>
+        <div class="note-card-head">
+          <div class="note-card-meta">
+            <span class="rev-topic">${escapeHtml(item.q.topic)}</span>
+            <span class="note-card-id">#${String(item.q.id).padStart(3, '0')}</span>
+          </div>
+          <div class="note-card-title">${escapeHtml(item.q.title)}</div>
+        </div>
+        <div class="note-card-preview">${escapeHtml(preview || 'Saved note available.').replace(/\n/g, '<br>')}</div>
+        <div class="note-card-footer">
+          <span class="note-card-stats">${item.d.images && item.d.images.length ? `${item.d.images.length} image${item.d.images.length > 1 ? 's' : ''}` : 'Text note'}</span>
+          <div class="note-card-actions">
+            <button class="link-btn note-view-btn">View</button>
+            <button class="link-btn note-edit-btn">Edit</button>
+          </div>
+        </div>
       `;
-      const btn = div.querySelector('button');
-      btn.addEventListener('click', () => {
-        document.getElementById('notesModal').style.display = 'none';
+      div.querySelector('.note-view-btn').addEventListener('click', () => {
+        closeNotesModal();
         jumpToQuestion(item.q.id);
+      });
+      div.querySelector('.note-edit-btn').addEventListener('click', () => {
+        closeNotesModal();
+        openNoteEditor(item.q.id);
       });
       list.appendChild(div);
     });
@@ -480,6 +513,11 @@ function jumpToQuestion(id) {
       setTimeout(() => { card.style.boxShadow = ''; }, 1500);
     }
   }, 200);
+}
+
+function openNoteEditor(id) {
+  jumpToQuestion(id);
+  setTimeout(() => openNotes(id), 300);
 }
 
 // ── Sidebar Toggle ────────────────────────────────────────

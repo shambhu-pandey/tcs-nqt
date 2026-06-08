@@ -433,10 +433,77 @@ body.light .code-area { background: #1a1d2e; }
   width: 540px; max-width: 100%; background: var(--bg-card); border: 1px solid var(--border);
   padding: 18px; border-radius: 12px; box-shadow: var(--shadow-card);
 }
+.modal#notesModal .modal-inner {
+  width: 760px;
+}
 .modal h3 { margin: 0 0 8px 0; font-size: 1.05rem; }
 .modal input[type="text"], .modal input[type="password"] {
   width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);
   background: var(--bg-secondary); color: var(--text-primary);
+}
+
+.note-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+.note-card:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-card);
+}
+.note-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.note-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.note-card-id {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+.note-card-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+.note-card-preview {
+  white-space: pre-wrap;
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-height: 180px;
+  overflow: auto;
+  padding-right: 4px;
+}
+.note-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.note-card-stats {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.note-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 /* ── Revision Mode Panel ── */
