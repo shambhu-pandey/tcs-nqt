@@ -56,7 +56,7 @@ function saveState(state) {
 }
 function getQ(id) {
   const s = loadState();
-  return s[id] || { practiced: false, completed: false, revision: false, starred: false, notes: '', approach: '', code: '', trick: '', images: [] };
+  return s[id] || { practiced: false, completed: false, revision: false, starred: false, notes: '', approach: '', code: '', trick: '', images: [], updatedAt: null };
 }
 function setQ(id, updates) {
   const s = loadState();
@@ -121,6 +121,21 @@ function escapeHtml(text) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function formatSavedTime(ts) {
+  if (!ts) return 'Saved content';
+  try {
+    return `Saved ${new Date(ts).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}`;
+  } catch (e) {
+    return 'Saved content';
+  }
+}
+
+function renderSavedPreview(text) {
+  const value = (text || '').trim();
+  if (!value) return '<span class="saved-note-empty">Nothing saved yet. Type below to store your note.</span>';
+  return escapeHtml(value).replace(/\n/g, '<br>');
 }
 
 function openNotesModal() {
@@ -276,6 +291,13 @@ function renderQuestions(questions) {
             <textarea class="notes-area" placeholder="Write your notes here... (e.g., what the problem is about, approach summary)"
               oninput="autoSave(${q.id},'notes',this.value)" onpaste="handlePaste(event,${q.id})">${d.notes || ''}</textarea>
             <div class="save-indicator" id="si_notes_${q.id}">✓ Saved</div>
+            <div class="saved-note-box">
+              <div class="saved-note-head">
+                <span class="saved-note-label">Saved Note Preview</span>
+                <span class="saved-note-time" id="saved_notes_time_${q.id}">${formatSavedTime(d.updatedAt)}</span>
+              </div>
+              <div class="saved-note-content" id="saved_notes_${q.id}">${renderSavedPreview(d.notes)}</div>
+            </div>
 
             <div style="margin-top:10px">
               <label style="font-size:0.85rem;color:var(--text-muted);font-weight:700;margin-bottom:6px;display:block">Attach images (screens, diagrams):</label>
@@ -344,13 +366,18 @@ function switchTab(id, tab, btnEl) {
 // ── Auto-save with debounce ───────────────────────────────
 const saveTimers = {};
 function autoSave(id, field, value) {
-  setQ(id, { [field]: value });
+  setQ(id, { [field]: value, updatedAt: Date.now() });
   const siKey = `si_${field}_${id}`;
   const ind = document.getElementById(siKey);
   if (!ind) return;
   ind.classList.add('show');
   clearTimeout(saveTimers[siKey]);
   saveTimers[siKey] = setTimeout(() => ind.classList.remove('show'), 1500);
+
+  const previewEl = document.getElementById(`saved_${field}_${id}`);
+  if (previewEl) previewEl.innerHTML = renderSavedPreview(value);
+  const timeEl = document.getElementById(`saved_${field}_time_${id}`);
+  if (timeEl) timeEl.textContent = formatSavedTime(Date.now());
 }
 
 // ── Check Handlers ────────────────────────────────────────

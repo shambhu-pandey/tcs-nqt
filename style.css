@@ -408,6 +408,47 @@ body.light .code-area { background: #1a1d2e; }
 }
 .save-indicator.show { opacity: 1; }
 
+.saved-note-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(0, 212, 170, 0.05);
+  border: 1px solid rgba(0, 212, 170, 0.18);
+}
+.saved-note-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.saved-note-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.saved-note-time {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.saved-note-content {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  max-height: 160px;
+  overflow: auto;
+}
+.saved-note-empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 /* Image gallery inside notes */
 .img-gallery {
   display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
